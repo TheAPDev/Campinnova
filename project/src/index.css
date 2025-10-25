@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add Montserrat font to headings */
+.montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
