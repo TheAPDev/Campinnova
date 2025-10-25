@@ -346,6 +346,7 @@ export default function Counselling() {
                       <p className="text-sm text-slate-400">
                         <span className="font-semibold text-slate-300">Charge/hr:</span>{' '}
                         ₹{counsellor.charge_hr && counsellor.charge_hr.trim() !== '' ? counsellor.charge_hr : '0'}
+                        <span className="ml-2 text-xs text-teal-400 font-semibold">1st session is free</span>
                       </p>
                     </div>
                     <button
