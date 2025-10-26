@@ -11,14 +11,17 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
 
+  const [success, setSuccess] = useState('');
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     try {
       if (isSignUp) {
         await signUp(name, email, password);
+        setSuccess('Verification email sent! Please check your inbox.');
       } else {
         await signIn(email, password);
       }
@@ -40,9 +43,9 @@ export default function Login() {
         <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-8">
           <div className="flex flex-col items-center mb-8">
             <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-teal-500/20 overflow-hidden bg-white">
-              <img src="https://fast-peach-dirh2aec5m.edgeone.app/WhatsApp%20Image%202025-10-25%20at%2023.26.45_b38a1f94.png" alt="CampusCare Logo" className="object-contain w-full h-full" />
+              <img src="https://thoughtless-cyan-69ehwn93jx.edgeone.app/WhatsApp%20Image%202025-10-25%20at%2023.26.45_b38a1f94.png" alt="Campinnova Logo" className="object-contain w-full h-full" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">CampusCare</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">Campinnova</h1>
             <p className="text-slate-400 text-center">Your mental wellness companion</p>
           </div>
 
@@ -94,6 +97,11 @@ export default function Login() {
               />
             </div>
 
+            {success && (
+              <div className="p-3 bg-green-500/10 border border-green-500/50 rounded-lg text-green-400 text-sm">
+                {success}
+              </div>
+            )}
             {error && (
               <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">
                 {error}

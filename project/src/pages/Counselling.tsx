@@ -10,9 +10,24 @@ import { useAuth } from '../contexts/AuthContext';
 import BottomNav from '../components/BottomNav';
 
 export default function Counselling() {
+  // Modal state for review/finalize
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewCounsellor, setReviewCounsellor] = useState<CounsellorWithCharge | null>(null);
+  const [privacyOptions, setPrivacyOptions] = useState({
+    revealName: false,
+    revealFace: false,
+    allowRecording: false,
+    shareContact: false,
+  });
   const { user } = useAuth();
   const [counsellors, setCounsellors] = useState<CounsellorWithCharge[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  // Review order state
+  const [orderDetails, setOrderDetails] = useState<{ days: number; frequency: string; sessionType: string }>({
+    days: 1,
+    frequency: 'Once',
+    sessionType: 'Video',
+  });
   const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -364,7 +379,7 @@ export default function Counselling() {
                       )}
                     </button>
                     {expandedId === counsellor.id && (
-                      <div className="mt-4 space-y-4 border-t border-slate-700 pt-4">
+                      <div className="mt-4 space-y-6 border-t border-slate-700 pt-4">
                         {counsellor.reviews && (
                           <div>
                             <h4 className="font-semibold text-slate-300 mb-2">Reviews</h4>
@@ -377,6 +392,114 @@ export default function Counselling() {
                             </div>
                           </div>
                         )}
+                        {/* Review Button triggers modal */}
+                        <div className="bg-slate-800/40 border border-teal-500/30 rounded-xl p-4 space-y-4">
+                          <h4 className="font-semibold text-teal-400 mb-2">Ready to book?</h4>
+                          <button
+                            className="w-full py-3 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-lg font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                            onClick={() => { setShowReviewModal(true); setReviewCounsellor(counsellor); }}
+                          >
+                            Review
+                          </button>
+                        </div>
+  {/* Review Modal Popup */}
+  {showReviewModal && reviewCounsellor && (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-slate-800 rounded-2xl border border-teal-500 w-full max-w-md p-8 shadow-2xl relative animate-in fade-in duration-200">
+        <button
+          className="absolute top-4 right-4 text-slate-400 hover:text-teal-400"
+          onClick={() => setShowReviewModal(false)}
+          title="Close"
+        >
+          ×
+        </button>
+        <h2 className="text-2xl font-bold text-white mb-4">Finalize Booking</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">How many days do you want?</label>
+            <input
+              type="number"
+              min={1}
+              max={30}
+              value={orderDetails.days}
+              onChange={e => setOrderDetails({ ...orderDetails, days: Number(e.target.value) })}
+              className="w-32 px-3 py-2 rounded-lg bg-slate-900/50 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              placeholder="Days"
+              title="Days"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Frequency</label>
+            <select
+              value={orderDetails.frequency}
+              onChange={e => setOrderDetails({ ...orderDetails, frequency: e.target.value })}
+              className="w-40 px-3 py-2 rounded-lg bg-slate-900/50 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              title="Frequency"
+            >
+              <option>Once</option>
+              <option>Weekly</option>
+              <option>Biweekly</option>
+              <option>Monthly</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Session Type</label>
+            <select
+              value={orderDetails.sessionType}
+              onChange={e => setOrderDetails({ ...orderDetails, sessionType: e.target.value })}
+              className="w-40 px-3 py-2 rounded-lg bg-slate-900/50 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              title="Session Type"
+            >
+              <option>Video</option>
+              <option>In-person</option>
+              <option>Chat</option>
+            </select>
+          </div>
+          <div className="mt-4 space-y-2">
+            <h3 className="font-semibold text-teal-400 mb-2">Privacy Options</h3>
+            <label className="flex items-center gap-2 text-slate-300">
+              <input
+                type="checkbox"
+                checked={privacyOptions.revealName}
+                onChange={e => setPrivacyOptions({ ...privacyOptions, revealName: e.target.checked })}
+              />
+              Reveal my name
+            </label>
+            <label className="flex items-center gap-2 text-slate-300">
+              <input
+                type="checkbox"
+                checked={privacyOptions.revealFace}
+                onChange={e => setPrivacyOptions({ ...privacyOptions, revealFace: e.target.checked })}
+              />
+              Reveal my face
+            </label>
+            <label className="flex items-center gap-2 text-slate-300">
+              <input
+                type="checkbox"
+                checked={privacyOptions.allowRecording}
+                onChange={e => setPrivacyOptions({ ...privacyOptions, allowRecording: e.target.checked })}
+              />
+              Allow session recording
+            </label>
+            <label className="flex items-center gap-2 text-slate-300">
+              <input
+                type="checkbox"
+                checked={privacyOptions.shareContact}
+                onChange={e => setPrivacyOptions({ ...privacyOptions, shareContact: e.target.checked })}
+              />
+              Share my contact info
+            </label>
+          </div>
+          <button
+            className="mt-6 w-full py-3 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-lg font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+            disabled={false}
+          >
+            Book Session
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
                         {counsellor.available_slots && (
                           <div>
                             <h4 className="font-semibold text-slate-300 mb-2">Available Time Slots</h4>

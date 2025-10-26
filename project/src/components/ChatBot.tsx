@@ -138,7 +138,7 @@ export default function ChatBot({ onClose }: ChatBotProps) {
       timestamp: new Date(),
     };
 
-  setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setLoading(true);
 
@@ -151,10 +151,13 @@ export default function ChatBot({ onClose }: ChatBotProps) {
     let escalationTriggered = false;
     let botText = '';
 
+    // Emergency helpline info
+    const helpline = '\n\nIf you are in crisis, please call the National Helpline for Mental Health: 9152987821 or 9152987820 (KIRAN), or visit https://www.mohfw.gov.in/pdf/helpline.pdf for more resources.';
+
     if (risk === 'high') {
       escalationTriggered = true;
       botText =
-        "I’m really sorry you’re feeling so overwhelmed. I’m here with you. Are you thinking of harming yourself?";
+        "I’m really sorry you’re feeling so overwhelmed. I’m here with you. Are you thinking of harming yourself?" + helpline;
     } else if (risk === 'moderate') {
       botText =
         "I’m hearing that it’s been getting harder recently. Would you like me to connect you with a campus counselor or a trained peer supporter? You can also keep chatting with me — whichever feels better.";
@@ -208,7 +211,7 @@ export default function ChatBot({ onClose }: ChatBotProps) {
       sender: 'bot',
       timestamp: new Date(),
     };
-  setMessages((prev) => [...prev, botMessage]);
+    setMessages((prev) => [...prev, botMessage]);
     memory.current = [...memory.current, botMessage].slice(-MAX_MEMORY);
     setLoading(false);
 

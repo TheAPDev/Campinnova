@@ -10,6 +10,7 @@ function AppContent() {
   const { user, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState('home');
 
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
@@ -36,7 +37,7 @@ function AppContent() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative min-h-screen">
       {renderPage()}
       <BottomNav activePage={currentPage} onNavigate={setCurrentPage} />
     </div>

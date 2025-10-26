@@ -86,23 +86,24 @@ export default function Groups() {
         <h1 className="text-4xl font-bold text-white mb-8 text-center">Communities</h1>
         <div className="flex h-[70vh] rounded-xl overflow-hidden shadow-2xl">
           {/* Sidebar: Group List */}
-          <div className="w-56 bg-slate-900/80 border-r border-slate-800 p-6 flex flex-col gap-6 relative">
+          <div className="w-64 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-r border-slate-800 p-8 flex flex-col items-center rounded-xl shadow-xl">
             <button
               onClick={() => setShowModal(true)}
-              className="w-12 h-12 rounded-full border-2 border-dashed border-slate-600 flex items-center justify-center text-slate-400 hover:border-teal-500 hover:text-teal-400 hover:bg-teal-500/10 hover:scale-110 transition-all"
+              className="w-14 h-14 rounded-full bg-gradient-to-br from-teal-500 to-blue-500 flex items-center justify-center text-white shadow-lg border-4 border-white/10 hover:scale-105 hover:shadow-xl transition-all duration-150"
               aria-label="Create new group"
+              style={{ marginBottom: '2.5rem' }}
             >
-              <Plus className="w-6 h-6" />
+              <Plus className="w-7 h-7" />
             </button>
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col items-center gap-6 w-full">
               {groups.map((group) => (
                 <button
                   key={group.id}
-                  className={`w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br ${getGroupColor(group.type)} text-white font-bold text-base shadow-lg hover:scale-105 transition-all ${selectedGroup?.id === group.id ? 'ring-2 ring-teal-400' : ''}`}
+                  className={`w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br ${getGroupColor(group.type)} text-white font-bold text-base shadow-lg border-4 border-white/10 hover:scale-110 hover:shadow-xl transition-all duration-150 ${selectedGroup?.id === group.id ? 'ring-4 ring-teal-400' : ''}`}
                   onClick={() => setSelectedGroup(group)}
                   aria-label={group.name}
                 >
-                  <span className="w-7 h-7 rounded-full flex items-center justify-center bg-slate-800/50 border border-slate-700 text-xs">{group.icon}</span>
+                  <span className="w-9 h-9 rounded-full flex items-center justify-center bg-slate-900/60 border border-slate-700 text-xs font-bold shadow-inner">{group.icon}</span>
                 </button>
               ))}
             </div>
