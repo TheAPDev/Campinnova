@@ -48,9 +48,10 @@ export default function Login() {
       <div className="w-full max-w-md relative z-10">
         <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-8">
           <div className="flex flex-col items-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Campinnova</h1>
-            <p className="text-lg text-teal-300 text-center mb-2">Where Campus Life meets Peace of Mind</p>
-            <p className="text-slate-400 text-center">Your mental wellness companion</p>
+            <h1 className="text-4xl font-bold text-white mb-3 montserrat" style={{ fontFamily: 'Montserrat, sans-serif' }}>Campinnova</h1>
+            <p className="text-lg text-center mb-6 inter font-medium text-teal-300" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '0.01em' }}>
+              Where Campus Life meets Peace of Mind
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
