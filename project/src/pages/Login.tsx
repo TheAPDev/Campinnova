@@ -22,8 +22,10 @@ export default function Login() {
       try {
         await signUp(name, email, password);
         setSuccess('Verification email sent! Please check your inbox.');
+        setError(''); // Clear any previous error
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
+        setSuccess(''); // Clear any previous success
       } finally {
         setLoading(false);
       }

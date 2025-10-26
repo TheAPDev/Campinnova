@@ -1,7 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-// @ts-ignore
-// Use dynamic import for OpenAI to avoid Vite ESM import errors
-let OpenAI: any = null;
 import { X, Send, Bot } from 'lucide-react';
 
 type Message = {
@@ -30,30 +27,7 @@ export default function ChatBot({ onClose }: ChatBotProps) {
 
   // Load chat history from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem(CHAT_STORAGE_KEY);
-    const startedAt = localStorage.getItem(CHAT_START_KEY);
-  // let shouldReset = false;
-    if (stored && startedAt) {
-      const started = new Date(startedAt);
-      const now = new Date();
-      const diff = now.getTime() - started.getTime();
-      if (diff > 12 * 60 * 60 * 1000) {
-        // More than 12 hours, erase chat
-        // (handled below by resetting)
-      } else {
-        try {
-          const parsed: (Omit<Message, 'timestamp'> & { timestamp: string })[] = JSON.parse(stored);
-          setMessages(parsed.map(m => ({
-            id: m.id,
-            text: m.text,
-            sender: m.sender,
-            timestamp: new Date(m.timestamp)
-          })));
-          return;
-        } catch {}
-      }
-    }
-    // If no stored chat or expired, start fresh
+    // Always start fresh chat on mount
     setMessages([
       {
         id: '1',
@@ -127,7 +101,7 @@ export default function ChatBot({ onClose }: ChatBotProps) {
     return /yes|allow|consent|ok/i.test(text);
   }
 
-  // Main send handler
+  // Main send handler (calls backend API for AI response)
   async function handleSend() {
     if (!input.trim() || loading) return;
 
@@ -161,35 +135,17 @@ export default function ChatBot({ onClose }: ChatBotProps) {
     } else if (risk === 'moderate') {
       botText =
         "I’m hearing that it’s been getting harder recently. Would you like me to connect you with a campus counselor or a trained peer supporter? You can also keep chatting with me — whichever feels better.";
-    }
-
-    // If escalation consent, send alert (simulated)
-    if (escalationTriggered && consentGiven) {
-      // eslint-disable-next-line no-console
-      console.log('ALERT: campus crisis team notified (anonymized)');
-    }
-
-    // If not high/moderate risk, call NVIDIA NGC API for bot response
-    if (risk === 'none') {
+    } else {
+      // Call backend API for AI response
       try {
-        // Prepare memory context for API
-        const contextMessages = [
-          {
-            role: 'system',
-            content:
-              `You are Campinnova — a compassionate, confidential, culturally aware campus mental-wellness chatbot for Indian college students. Follow all safety, escalation, privacy, and tone rules. Use Hindi/Hinglish/English as appropriate. Respond concisely (1-3 short paragraphs).\n` +
-              `Conversation so far: ` + memory.current.map((m) => `${m.sender}: ${m.text}`).join(' | '),
-          },
-          { role: 'user', content: input },
-        ];
-
-        // Call backend proxy
         const res = await fetch('http://localhost:5174/api/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            // Optionally add session ID for memory
+            //'X-Session-ID': 'frontend',
           },
-          body: JSON.stringify({ messages: contextMessages }),
+          body: JSON.stringify({ message: input }),
         });
         const data = await res.json();
         if (res.ok && data.response) {
@@ -197,11 +153,16 @@ export default function ChatBot({ onClose }: ChatBotProps) {
         } else {
           botText = `Sorry, I’m having trouble connecting right now. (${data.error || 'Proxy/API error'})`;
         }
-      } catch (err: any) {
-        // eslint-disable-next-line no-console
-        console.error('Proxy error:', err);
-        botText = `Sorry, I’m having trouble connecting right now. (${err?.message || 'Network/API error'})`;
+      } catch (err) {
+        const errorMsg = (err as Error)?.message || 'Network/API error';
+        botText = `Sorry, I’m having trouble connecting right now. (${errorMsg})`;
       }
+    }
+
+    // If escalation consent, send alert (simulated)
+    if (escalationTriggered && consentGiven) {
+      // eslint-disable-next-line no-console
+      console.log('ALERT: campus crisis team notified (anonymized)');
     }
 
     // Add bot message
